@@ -1,0 +1,5 @@
+# Cek status Nginx setiap tengah malam (00:00)
+0 0 * * * /usr/bin/systemctl is-active --quiet nginx || /usr/bin/systemctl restart nginx >> /home/irawan/nginx-monitor.log 2>&1
+
+# Update paket keamanan setiap minggu jam 3 pagi
+0 3 * * 0 /usr/bin/apt update && /usr/bin/apt upgrade -y >> /home/irawan/apt-upgrade.log 2>&1

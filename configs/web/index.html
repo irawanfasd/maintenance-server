@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selamat Datang — by Irawanfree</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-1: #050816;
+      --accent: #34d399;
+      --accent-2: #22d3ee;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at 20% 20%, #0f172a 0%, var(--bg-1) 45%, #020617 100%);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    /* ===== LOADER ===== */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #loader.hidden { opacity: 0; visibility: hidden; }
+
+    .spinner {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 3px solid rgba(52, 211, 153, 0.15);
+      border-top-color: var(--accent);
+      border-right-color: var(--accent-2);
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 30px rgba(52, 211, 153, 0.25);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loader-text {
+      margin-top: 20px;
+      font-size: 0.85rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* ===== BACKGROUND ORBS ===== */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.35;
+      pointer-events: none;
+      animation: float 12s ease-in-out infinite;
+    }
+    .orb.one { width: 320px; height: 320px; background: var(--accent); top: -80px; left: -80px; }
+    .orb.two { width: 280px; height: 280px; background: var(--accent-2); bottom: -60px; right: -60px; animation-delay: -6s; }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    /* ===== WRAPPER ===== */
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      perspective: 1000px; /* untuk efek 3D tilt */
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    .wrapper.visible { opacity: 1; transform: translateY(0); }
+
+    /* ===== CARD ===== */
+    .card {
+      position: relative;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 20px;
+      padding: 48px 36px;
+      max-width: 540px;
+      width: 100%;
+      text-align: center;
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+      will-change: transform;
+      cursor: pointer;
+    }
+
+    /* Kilau melintas */
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(120deg, transparent, rgba(52, 211, 153, 0.35), transparent);
+      transform: translateX(-100%);
+      animation: shimmer 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      60%, 100% { transform: translateX(100%); }
+    }
+
+    /* Animasi saat card diklik */
+    .card.clicked {
+      animation: cardClick 0.5s ease;
+    }
+    @keyframes cardClick {
+      0% { transform: scale(1) rotateX(0) rotateY(0); }
+      30% { transform: scale(0.95) rotateX(5deg) rotateY(-5deg); }
+      60% { transform: scale(1.02) rotateX(-3deg) rotateY(3deg); }
+      100% { transform: scale(1) rotateX(0) rotateY(0); }
+    }
+
+    /* ===== ELEMEN DI DALAM CARD ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 22px;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 2.4rem);
+      margin-bottom: 14px;
+      background: linear-gradient(90deg, #ffffff, #a7f3d0, #67e8f9);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 6s ease infinite;
+      background-size: 200% auto;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.98rem;
+      margin-bottom: 28px;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .info {
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      transform: translateY(10px);
+      cursor: pointer;
+    }
+    .info:hover {
+      border-color: rgba(52, 211, 153, 0.4);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(52, 211, 153, 0.15);
+    }
+    .info strong { color: var(--accent-2); font-weight: 600; }
+
+    /* Progress bar */
+    .progress {
+      margin-top: 24px;
+      height: 4px;
+      width: 100%;
+      background: rgba(148, 163, 184, 0.12);
+      border-radius: 999px;
+      overflow: hidden;
+      opacity: 0;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 999px;
+      animation: loadBar 3.5s ease-in-out infinite;
+    }
+    @keyframes loadBar {
+      0% { width: 0%; }
+      50% { width: 70%; }
+      100% { width: 100%; }
+    }
+
+    /* Animasi masuk elemen setelah loader hilang */
+    .wrapper.visible .badge { animation: fadeUp 0.6s ease 0.1s forwards; }
+    .wrapper.visible h1 { animation: fadeUp 0.6s ease 0.25s forwards; }
+    .wrapper.visible p { animation: fadeUp 0.6s ease 0.4s forwards; }
+    .wrapper.visible .info { animation: fadeUp 0.6s ease 0.55s forwards; }
+    .wrapper.visible .progress { animation: fadeIn 0.6s ease 0.7s forwards; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <div class="loader-text">Memuat server…</div>
+  </div>
+
+  <!-- BACKGROUND ORBS -->
+  <div class="orb one"></div>
+  <div class="orb two"></div>
+
+  <!-- CARD -->
+  <div class="wrapper" id="wrapper">
+    <div class="card" id="card">
+      <div class="badge"><span class="dot"></span> Server Online</div>
+      <h1>Selamat Datang</h1>
+      <p>Baru dimaintenance sama admin, sabar ya :)</p>
+      <div class="info" id="infoBox">
+        Domain: <strong>lmsmoodletest.xyz</strong>
+      </div>
+      <div class="progress">
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== LOADER =====
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        document.getElementById('loader').classList.add('hidden');
+        document.getElementById('wrapper').classList.add('visible');
+      }, 1200);
+    });
+
+    // ===== CARD 3D TILT (bergerak mengikuti mouse) =====
+    const card = document.getElementById('card');
+    const wrapper = document.getElementById('wrapper');
+
+    wrapper.addEventListener('mousemove', function (e) {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateY = ((x - centerX) / centerX) * 10; // max 10 derajat
+      const rotateX = ((centerY - y) / centerY) * 10;
+
+      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+    });
+
+    wrapper.addEventListener('mouseleave', function () {
+      card.style.transform = 'rotateX(0) rotateY(0) scale(1)';
+    });
+
+    // ===== CARD CLICK ANIMATION =====
+    card.addEventListener('click', function () {
+      card.classList.remove('clicked');
+      void card.offsetWidth; // reset animasi
+      card.classList.add('clicked');
+    });
+
+    // ===== INFO BOX CLICK: efek ripple =====
+    const infoBox = document.getElementById('infoBox');
+    infoBox.addEventListener('click', function (e) {
+      const ripple = document.createElement('span');
+      ripple.style.position = 'absolute';
+      ripple.style.width = '10px';
+      ripple.style.height = '10px';
+      ripple.style.borderRadius = '50%';
+      ripple.style.background = 'rgba(52, 211, 153, 0.6)';
+      ripple.style.pointerEvents = 'none';
+      ripple.style.transform = 'translate(-50%, -50%)';
+      ripple.style.left = (e.clientX - infoBox.getBoundingClientRect().left) + 'px';
+      ripple.style.top = (e.clientY - infoBox.getBoundingClientRect().top) + 'px';
+      ripple.style.animation = 'rippleOut 0.6s ease-out forwards';
+      infoBox.style.position = 'relative';
+      infoBox.style.overflow = 'hidden';
+      infoBox.appendChild(ripple);
+      setTimeout(function () { ripple.remove(); }, 600);
+    });
+
+    // Tambahkan keyframe ripple lewat JS (karena tidak ada di CSS)
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes rippleOut {
+        0% { width: 10px; height: 10px; opacity: 1; }
+        100% { width: 120px; height: 120px; opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

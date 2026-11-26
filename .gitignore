@@ -1,0 +1,7 @@
+*.log
+*.tmp
+.env
+.ssh/
+node_modules/
+__pycache__/
+*.pyc
