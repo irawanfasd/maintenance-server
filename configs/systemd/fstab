@@ -1,0 +1,6 @@
+UUID=65d65659-f06c-4d9e-ac49-4280f8908dcb    /        ext4    defaults,noatime,nodiratime,commit=600,errors=remount-ro      0 1
+LABEL=BOOT_EMMC        /boot    vfat                   defaults                   0 2
+tmpfs  /tmp  tmpfs  defaults,nosuid,nodev,size=256M,mode=1777  0 0
+
+UUID=c30479b9-a03e-4e30-958a-c5c6c95ea871 /mnt/data ext4 defaults,noatime,nofail 0 2
+UUID=e94e8e6b-4982-4777-b617-fc08ac037c7b /mnt/usb ext4 defaults,noatime,nofail,x-systemd.device-timeout=5s 0 2

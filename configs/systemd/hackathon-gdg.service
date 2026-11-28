@@ -1,0 +1,16 @@
+[Unit]
+Description=Hackathon GDG Next.js App
+After=network.target
+
+[Service]
+Type=simple
+User=irawan
+WorkingDirectory=/home/irawan/hackathon-gdg
+ExecStart=/usr/bin/npm run start
+Restart=on-failure
+RestartSec=10
+# Batasi memori agar tidak menjatuhkan sistem (sesuaikan jika perlu)
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target
